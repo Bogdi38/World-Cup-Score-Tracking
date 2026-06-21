@@ -67,24 +67,27 @@ public class WorldCup {
                         System.out.print(" " +matrix[i][j] + " ");
                     }
                     else  if(matrix[i][j] < 0) {
-                        points[j]+=3;
                         System.out.print(matrix[i][j] + " ");
                     }
                 }
                 System.out.println();
             }
-            for (int i = 0; i < points.length; i++) {
-                int current_team_index = i;
-                char current_team =  (char) ('A' + i);
-                System.out.println(current_team + " has "+ points[i] + " points, GD " + sum(matrix[current_team_index]));
-                points[i]=0;
-            }
+            print_result(points, matrix);
 //            TODO
 //            Team A owns Team B if goal diff (score1-2) >2
 //            Add amount of games played, 3 max for each
 //            Add points for draws, but not before the game is played
             position1_taken = false;
             text = input.nextLine();
+        }
+    }
+
+    private static void print_result(int[] points, int[][] matrix) {
+        for (int i = 0; i < points.length; i++) {
+            int current_team_index = i;
+            char current_team =  (char) ('A' + i);
+            System.out.println(current_team + " has "+ points[i] + " points, GD " + sum(matrix[current_team_index]));
+            points[i]=0;
         }
     }
 

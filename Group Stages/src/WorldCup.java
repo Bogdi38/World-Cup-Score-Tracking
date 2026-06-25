@@ -3,19 +3,27 @@ import java.util.Objects;
 import java.util.Scanner;
 
 import static java.lang.Thread.sleep;
-
 public class WorldCup {
+    private static final int GROUP_SIZE = 4;
+
     public static void main(String[] args) throws InterruptedException {
         Scanner input = new Scanner(System.in);
         System.out.println("Would you like to keep tracks of games or analyse possible scenarios?");
-        sleep(5000);
+//        TODO
+//        sleep(5000);
         System.out.println("Press T for tracking and A for analysis");
         String text = input.nextLine();
+        boolean analysis = false;
         if (text.equals("A")||text.equals("a")) {
+            analysis = true;
+        }else if (text.equals("T")||text.equals("t")) {
+//            analysis = false;
+        }
             text = input.nextLine();
             char team1 = 'z', team2 = 'z';
-            int[] points = new int[4];
-            int[][] matrix = new int[4][4], owns = new int[4][4];
+            int[] points = new int[GROUP_SIZE];
+            boolean[] played= new boolean[GROUP_SIZE * (GROUP_SIZE - 1) / 2];
+            int[][] matrix = new int[GROUP_SIZE][GROUP_SIZE], owns = new int[GROUP_SIZE][GROUP_SIZE];
             int score1 = 0, score2 = 0;
             boolean position1_taken = false;
             while (!Objects.equals(text, "0")) {
@@ -59,14 +67,20 @@ public class WorldCup {
                         team2 = 'D';
                     }
                 }
-                matrix[team1 - 'A'][team2 - 'A'] = score1 - score2;
-                matrix[team2 - 'A'][team1 - 'A'] = score2 - score1;
-                print_result_matrix(matrix, points, owns);
-                print_points(points, matrix);
-                print_owns(owns);
+                int i=team1 - 'A';
+                int j=team2 - 'A';
+                if(!analysis && played[i * GROUP_SIZE - i*(i+1)/2 + (j - i - 1)]) {
+                        System.out.println("This game was already recorded");
+                }else {
+                    matrix[team1 - 'A'][team2 - 'A'] = score1 - score2;
+                    matrix[team2 - 'A'][team1 - 'A'] = score2 - score1;
+                    played[i * GROUP_SIZE - i * (i + 1) / 2 + (j - i - 1)] = true;
+                    print_result_matrix(matrix, points, owns);
+                    print_points(points, matrix);
+                    print_owns(owns);
+                }
 //            TODO
 //            prevent changing scores
-//            switch between final mode and analytic
 //            Add amount of games played, 3 max for each
 //            Add points for draws, but not before the game is played
 //            Reset points with R
@@ -77,9 +91,6 @@ public class WorldCup {
                 position1_taken = false;
                 text = input.nextLine();
             }
-        } else if (text.equals("T")||text.equals("T")) {
-
-        }
     }
 
     private static void print_result_matrix(int[][] matrix, int[] points, int[][] owns) {

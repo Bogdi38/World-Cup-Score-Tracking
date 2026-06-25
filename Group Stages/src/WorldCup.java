@@ -3,13 +3,16 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static java.lang.Integer.max;
+import static java.lang.Integer.min;
+import static java.lang.Thread.ofPlatform;
 import static java.lang.Thread.sleep;
 public class WorldCup {
     private static final int GROUP_SIZE = 4;
 
     public static void main(String[] args) throws InterruptedException {
         Scanner input = new Scanner(System.in);
-        System.out.println("Would you like to keep tracks of games or analyse possible scenarios?");
+        System.out.println("Would you like to keep tracks of real matches or analyse possible scenarios?");
 //        TODO
 //        sleep(5000);
         System.out.println("Press T for tracking and A for analysis");
@@ -30,7 +33,7 @@ public class WorldCup {
             while (!Objects.equals(text, "0")) {
                 if (text.equals("R")) {
                     reset(points, played, matrix, owns);
-                    print_all(matrix, points, owns);
+                    print_all(matrix, points, owns, played);
                     text = input.nextLine();
                 } else {
                     if (text.contains("A")) {
@@ -81,11 +84,10 @@ public class WorldCup {
                         matrix[team1 - 'A'][team2 - 'A'] = score1 - score2;
                         matrix[team2 - 'A'][team1 - 'A'] = score2 - score1;
                         played[i * GROUP_SIZE - i * (i + 1) / 2 + (j - i - 1)] = true;
-                        print_all(matrix, points, owns);
+                        print_all(matrix, points, owns, played);
                     }
 //            TODO
-//            prevent changing scores
-//            Add points for draws, but not before the game is played
+//            POINTS AND OWNS don't remap when score is changed
 //            Team Names
 //            Find when scenario hurts (people complain, USA won, Turkey out)
 //            And when it's good, i.e. the h2h W goes through
@@ -96,8 +98,8 @@ public class WorldCup {
             }
     }
 
-    private static void print_all(int[][] matrix, int[] points, int[][] owns) {
-        print_result_matrix(matrix, points, owns);
+    private static void print_all(int[][] matrix, int[] points, int[][] owns, boolean[] played) {
+        print_result_matrix(matrix, points, owns, played);
         print_points(points, matrix);
         print_owns(owns);
     }
@@ -112,7 +114,7 @@ public class WorldCup {
         System.out.println("You have reset the points");
     }
 
-    private static void print_result_matrix(int[][] matrix, int[] points, int[][] owns) {
+    private static void print_result_matrix(int[][] matrix, int[] points, int[][] owns, boolean[] played) {
         System.out.println("    A  B  C  D");
         for (int i = 0; i < matrix.length; i++) {
             System.out.print((char) ('A' + i) + "  ");
@@ -127,7 +129,11 @@ public class WorldCup {
                         owns[i][j] = 0;
                     }
                 } else if (matrix[i][j] == 0) {
-//                        points[i]+=1;
+                    int small = min(i,j);
+                    int big = max(i,j);
+                    if(i != j && played[small * GROUP_SIZE - small * (small + 1) / 2 + (big - small - 1)]) {
+                        points[i] += 1;
+                    }
                     System.out.print(" " + matrix[i][j] + " ");
                 } else if (matrix[i][j] < 0) {
                     System.out.print(matrix[i][j] + " ");

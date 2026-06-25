@@ -87,7 +87,6 @@ public class WorldCup {
                         print_all(matrix, points, owns, played);
                     }
 //            TODO
-//            POINTS AND OWNS don't remap when score is changed
 //            Team Names
 //            Find when scenario hurts (people complain, USA won, Turkey out)
 //            And when it's good, i.e. the h2h W goes through
@@ -129,6 +128,7 @@ public class WorldCup {
                         owns[i][j] = 0;
                     }
                 } else if (matrix[i][j] == 0) {
+                    owns[i][j] = 0;
                     int small = min(i,j);
                     int big = max(i,j);
                     if(i != j && played[small * GROUP_SIZE - small * (small + 1) / 2 + (big - small - 1)]) {
@@ -136,6 +136,7 @@ public class WorldCup {
                     }
                     System.out.print(" " + matrix[i][j] + " ");
                 } else if (matrix[i][j] < 0) {
+                    owns[i][j] = 0;
                     System.out.print(matrix[i][j] + " ");
                 }
             }

@@ -1,4 +1,5 @@
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -27,58 +28,71 @@ public class WorldCup {
             int score1 = 0, score2 = 0;
             boolean position1_taken = false;
             while (!Objects.equals(text, "0")) {
-                if (text.contains("A")) {
-                    if (!position1_taken) {
-                        score1 = text.charAt(text.indexOf("A") + 1);
-                        position1_taken = true;
-                        team1 = 'A';
-                    } else {
-                        score2 = text.charAt(text.indexOf("A") + 1);
-                        team2 = 'A';
+                if (text.equals("R")) {
+                    Arrays.fill(points, 0);
+                    Arrays.fill(played, false);
+                    for (int i = 0; i < GROUP_SIZE; i++) {
+                        Arrays.fill(matrix[i], 0);
+                        Arrays.fill(owns[i], 0);
                     }
-                }
-                if (text.contains("B")) {
-                    if (!position1_taken) {
-                        score1 = text.charAt(text.indexOf("B") + 1);
-                        position1_taken = true;
-                        team1 = 'B';
-                    } else {
-                        score2 = text.charAt(text.indexOf("B") + 1);
-                        team2 = 'B';
-                    }
-                }
-                if (text.contains("C")) {
-                    if (!position1_taken) {
-                        score1 = text.charAt(text.indexOf("C") + 1);
-                        position1_taken = true;
-                        team1 = 'C';
-                    } else {
-                        score2 = text.charAt(text.indexOf("C") + 1);
-                        team2 = 'C';
-                    }
-                }
-                if (text.contains("D")) {
-                    if (!position1_taken) {
-                        score1 = text.charAt(text.indexOf("D") + 1);
-                        position1_taken = true;
-                        team1 = 'D';
-                    } else {
-                        score2 = text.charAt(text.indexOf("D") + 1);
-                        team2 = 'D';
-                    }
-                }
-                int i=team1 - 'A';
-                int j=team2 - 'A';
-                if(!analysis && played[i * GROUP_SIZE - i*(i+1)/2 + (j - i - 1)]) {
-                        System.out.println("This game was already recorded");
-                }else {
-                    matrix[team1 - 'A'][team2 - 'A'] = score1 - score2;
-                    matrix[team2 - 'A'][team1 - 'A'] = score2 - score1;
-                    played[i * GROUP_SIZE - i * (i + 1) / 2 + (j - i - 1)] = true;
+                    System.out.println("You have reset the points");
                     print_result_matrix(matrix, points, owns);
                     print_points(points, matrix);
                     print_owns(owns);
-                }
+                    text = input.nextLine();
+                } else {
+                    if (text.contains("A")) {
+                        if (!position1_taken) {
+                            score1 = text.charAt(text.indexOf("A") + 1);
+                            position1_taken = true;
+                            team1 = 'A';
+                        } else {
+                            score2 = text.charAt(text.indexOf("A") + 1);
+                            team2 = 'A';
+                        }
+                    }
+                    if (text.contains("B")) {
+                        if (!position1_taken) {
+                            score1 = text.charAt(text.indexOf("B") + 1);
+                            position1_taken = true;
+                            team1 = 'B';
+                        } else {
+                            score2 = text.charAt(text.indexOf("B") + 1);
+                            team2 = 'B';
+                        }
+                    }
+                    if (text.contains("C")) {
+                        if (!position1_taken) {
+                            score1 = text.charAt(text.indexOf("C") + 1);
+                            position1_taken = true;
+                            team1 = 'C';
+                        } else {
+                            score2 = text.charAt(text.indexOf("C") + 1);
+                            team2 = 'C';
+                        }
+                    }
+                    if (text.contains("D")) {
+                        if (!position1_taken) {
+                            score1 = text.charAt(text.indexOf("D") + 1);
+                            position1_taken = true;
+                            team1 = 'D';
+                        } else {
+                            score2 = text.charAt(text.indexOf("D") + 1);
+                            team2 = 'D';
+                        }
+                    }
+                    int i = team1 - 'A';
+                    int j = team2 - 'A';
+                    if (!analysis && played[i * GROUP_SIZE - i * (i + 1) / 2 + (j - i - 1)]) {
+                        System.out.println("This game was already recorded");
+                    } else {
+                        matrix[team1 - 'A'][team2 - 'A'] = score1 - score2;
+                        matrix[team2 - 'A'][team1 - 'A'] = score2 - score1;
+                        played[i * GROUP_SIZE - i * (i + 1) / 2 + (j - i - 1)] = true;
+                        print_result_matrix(matrix, points, owns);
+                        print_points(points, matrix);
+                        print_owns(owns);
+                    }
 //            TODO
 //            prevent changing scores
 //            Add amount of games played, 3 max for each
@@ -88,8 +102,9 @@ public class WorldCup {
 //            Find when scenario hurts (people complain, USA won, Turkey out)
 //            And when it's good, i.e. the h2h W goes through
 //            Maybe simulate all options and find which one's more common
-                position1_taken = false;
-                text = input.nextLine();
+                    position1_taken = false;
+                    text = input.nextLine();
+                }
             }
     }
 

@@ -9,6 +9,13 @@ import static java.lang.Thread.ofPlatform;
 import static java.lang.Thread.sleep;
 public class WorldCup {
     private static final int GROUP_SIZE = 4;
+    static int[] points = new int[GROUP_SIZE];
+    static boolean[] played= new boolean[GROUP_SIZE * (GROUP_SIZE - 1) / 2];
+    static int[][] score_matrix = new int[GROUP_SIZE][GROUP_SIZE];
+    static int[][] owns = new int[GROUP_SIZE][GROUP_SIZE];
+    static int score1 = 0;
+    static int score2 = 0;
+    static boolean position1_taken = false;
 
     public static void main(String[] args) throws InterruptedException {
         Scanner input = new Scanner(System.in);
@@ -25,16 +32,11 @@ public class WorldCup {
         }
             text = input.nextLine();
             char team1 = 'z', team2 = 'z';
-            int[] points = new int[GROUP_SIZE];
-            boolean[] played= new boolean[GROUP_SIZE * (GROUP_SIZE - 1) / 2];
-            int[][] matrix = new int[GROUP_SIZE][GROUP_SIZE], owns = new int[GROUP_SIZE][GROUP_SIZE];
-            int score1 = 0, score2 = 0;
-            boolean position1_taken = false;
+
             while (!Objects.equals(text, "0")) {
                 if (text.equals("R")) {
-                    reset(points, played, matrix, owns);
-                    print_all(matrix, points, owns, played);
-                    text = input.nextLine();
+                    reset(points, played, score_matrix, owns);
+                    print_all(score_matrix, points, owns, played);
                 } else {
                     if (text.contains("A")) {
                         if (!position1_taken) {
@@ -78,22 +80,27 @@ public class WorldCup {
                     }
                     int i = team1 - 'A';
                     int j = team2 - 'A';
-                    if (!analysis && played[i * GROUP_SIZE - i * (i + 1) / 2 + (j - i - 1)]) {
+                    int matrix_to_array = i * GROUP_SIZE - i * (i + 1) / 2 + (j - i - 1);
+                    if (!analysis && played[matrix_to_array]) {
                         System.out.println("This game was already recorded");
                     } else {
-                        matrix[team1 - 'A'][team2 - 'A'] = score1 - score2;
-                        matrix[team2 - 'A'][team1 - 'A'] = score2 - score1;
-                        played[i * GROUP_SIZE - i * (i + 1) / 2 + (j - i - 1)] = true;
-                        print_all(matrix, points, owns, played);
+                        score_matrix[team1 - 'A'][team2 - 'A'] = score1 - score2;
+                        score_matrix[team2 - 'A'][team1 - 'A'] = score2 - score1;
+                        played[matrix_to_array] = true;
+                        print_all(score_matrix, points, owns, played);
                     }
 //            TODO
-//            Team Names
-//            Find when scenario hurts (people complain, USA won, Turkey out)
-//            And when it's good, i.e. the h2h W goes through
-//            Maybe simulate all options and find which one's more common
+//                  Rank
+//                  Team Names
+//                Find when scenario hurts (people complain, USA won, Turkey out)
+//                And when it's good, i.e. the h2h W goes through
+//                Maybe simulate all options and find which one's more common
+                    if(all_played(played)){
+//                        rank them;
+                    }
                     position1_taken = false;
-                    text = input.nextLine();
                 }
+                text = input.nextLine();
             }
     }
 
@@ -168,5 +175,21 @@ public class WorldCup {
             result += i;
         }
         return result;
+    }
+
+    private static boolean all_played(boolean[] played) {
+        for (boolean b : played) {
+            if (!b) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void rank(int[][] score_matrix, boolean[] played, int[] points) {
+        for (int i = 0; i < GROUP_SIZE; i++) {
+
+        }
+
     }
 }

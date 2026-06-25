@@ -29,16 +29,8 @@ public class WorldCup {
             boolean position1_taken = false;
             while (!Objects.equals(text, "0")) {
                 if (text.equals("R")) {
-                    Arrays.fill(points, 0);
-                    Arrays.fill(played, false);
-                    for (int i = 0; i < GROUP_SIZE; i++) {
-                        Arrays.fill(matrix[i], 0);
-                        Arrays.fill(owns[i], 0);
-                    }
-                    System.out.println("You have reset the points");
-                    print_result_matrix(matrix, points, owns);
-                    print_points(points, matrix);
-                    print_owns(owns);
+                    reset(points, played, matrix, owns);
+                    print_all(matrix, points, owns);
                     text = input.nextLine();
                 } else {
                     if (text.contains("A")) {
@@ -89,15 +81,11 @@ public class WorldCup {
                         matrix[team1 - 'A'][team2 - 'A'] = score1 - score2;
                         matrix[team2 - 'A'][team1 - 'A'] = score2 - score1;
                         played[i * GROUP_SIZE - i * (i + 1) / 2 + (j - i - 1)] = true;
-                        print_result_matrix(matrix, points, owns);
-                        print_points(points, matrix);
-                        print_owns(owns);
+                        print_all(matrix, points, owns);
                     }
 //            TODO
 //            prevent changing scores
-//            Add amount of games played, 3 max for each
 //            Add points for draws, but not before the game is played
-//            Reset points with R
 //            Team Names
 //            Find when scenario hurts (people complain, USA won, Turkey out)
 //            And when it's good, i.e. the h2h W goes through
@@ -106,6 +94,22 @@ public class WorldCup {
                     text = input.nextLine();
                 }
             }
+    }
+
+    private static void print_all(int[][] matrix, int[] points, int[][] owns) {
+        print_result_matrix(matrix, points, owns);
+        print_points(points, matrix);
+        print_owns(owns);
+    }
+
+    private static void reset(int[] points, boolean[] played, int[][] matrix, int[][] owns) {
+        Arrays.fill(points, 0);
+        Arrays.fill(played, false);
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            Arrays.fill(matrix[i], 0);
+            Arrays.fill(owns[i], 0);
+        }
+        System.out.println("You have reset the points");
     }
 
     private static void print_result_matrix(int[][] matrix, int[] points, int[][] owns) {
@@ -119,6 +123,8 @@ public class WorldCup {
                     System.out.print(" " + matrix[i][j] + " ");
                     if (matrix[i][j] > 2) {
                         owns[i][j] = 1;
+                    }else  {
+                        owns[i][j] = 0;
                     }
                 } else if (matrix[i][j] == 0) {
 //                        points[i]+=1;

@@ -1,5 +1,4 @@
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -9,8 +8,7 @@ public class WorldCup {
         String text = input.nextLine();
         char team1='z', team2='z';
         int[] points = new int[4];
-        int[][] matrix = new int[4][4];
-        int a = 0, b = 0, c = 0;
+        int[][] matrix = new int[4][4], owns = new int[4][4];
         int score1=0, score2=0;
         boolean position1_taken = false;
         while (!Objects.equals(text, "0")){
@@ -61,6 +59,9 @@ public class WorldCup {
                     if(matrix[i][j] > 0) {
                         points[i]+=3;
                         System.out.print(" " + matrix[i][j] + " ");
+                        if (matrix[i][j]>2){
+                            owns[i][j]=1;
+                        }
                     }
                     else if (matrix[i][j] == 0) {
 //                        points[i]+=1;
@@ -73,28 +74,43 @@ public class WorldCup {
                 System.out.println();
             }
             print_result(points, matrix);
+            print_owns(owns);
 //            TODO
-//            Team A owns Team B if goal diff (score1-2) >2
+//            prevent changing scores
 //            Add amount of games played, 3 max for each
 //            Add points for draws, but not before the game is played
+//            Reset points with R
+//            Team Names
+//            Find when scenario hurts (people complain, USA won, Turkey out)
+//            And when it's good, i.e. the h2h W goes through
+//            Maybe simulate all options and find which one's more common
             position1_taken = false;
             text = input.nextLine();
         }
     }
 
+    private static void print_owns(int[][] owns) {
+        for(int i = 0; i< owns.length; i++){
+            for(int j = 0; j< owns[i].length; j++){
+                if(owns[i][j]==1){
+                    System.out.println("Team " + (char)('A'+i) + " owns team " + (char)('A'+j ));
+                }
+            }
+        }
+    }
+
     private static void print_result(int[] points, int[][] matrix) {
-        for (int i = 0; i < points.length; i++) {
-            int current_team_index = i;
-            char current_team =  (char) ('A' + i);
-            System.out.println(current_team + " has "+ points[i] + " points, GD " + sum(matrix[current_team_index]));
-            points[i]=0;
+        for (int current_team_index = 0; current_team_index < points.length; current_team_index++) {
+            char current_team = (char) ('A' + current_team_index);
+            System.out.println(current_team + " has " + points[current_team_index] + " points, GD " + sum(matrix[current_team_index]));
+            points[current_team_index] = 0;
         }
     }
 
     private static int sum(int[] matrix) {
         int result = 0;
-        for (int i = 0; i < matrix.length; i++) {
-            result += matrix[i];
+        for (int i : matrix) {
+            result += i;
         }
         return result;
     }
